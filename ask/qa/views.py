@@ -32,7 +32,7 @@ def paginate(request, qs):
 
 @require_GET
 def main(request, *args, **kwargs):
-    qs = questions = Question.objects.new()    
+    qs = Question.objects.new()   
     page, paginator = paginate(request, qs)
     return render(request, 'index.html', {
         'questions': page.object_list,

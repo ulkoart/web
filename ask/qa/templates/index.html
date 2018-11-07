@@ -5,9 +5,9 @@
     <title>ask</title>
   </head>
   <body>
-    {% for question in questions%}
+    {% for question in questions %}
       <li>
-         <a href="{{ question.get_url }}">{{ question.title }}</a>
+         <a href="{{ question.get_url }}">{{ question.title }}</a> {{ question.added_at }}
       </li>
     {% endfor %}
     <hr>
