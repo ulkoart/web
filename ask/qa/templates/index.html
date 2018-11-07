@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ask</title>
+  </head>
+  <body>
+    {% for question in questions%}
+      <li>
+         <a href="{{ question.get_url }}">{{ question.title }}</a>
+      </li>
+    {% endfor %}
+    <hr>
+    {% for p in paginator.page_range %}
+      <a href="?page={{ p }}">{{ p }}</a>
+    {% endfor %}
+</body>
+</html>

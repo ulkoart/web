@@ -19,6 +19,9 @@ class Question(models.Model):
     likes = models.ManyToManyField(User, blank=True)
     objects = QuestionManager()
 
+    def get_url(self):
+    	return "/question/{0}/".format(self.id) 
+
     def __str__(self):
         return self.title
 
