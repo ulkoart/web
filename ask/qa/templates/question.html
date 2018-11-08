@@ -7,8 +7,14 @@
   <body>
     <h2>{{ question.title }}</h2>
     <p>{{ question.text }}</p>
-    {% for ansver in question.answer_set.all %}
-    {{ ansver }}
-    {% endfor %}
-</body>
-</html>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.text }}
+      <button type="submit">Сохранить</button>
+      <ul>
+        {% for ansver in question.answer_set.all %}
+          <li>{{ ansver }}</li>
+        {% endfor %}
+      </ul>
+    </body>
+  </html>

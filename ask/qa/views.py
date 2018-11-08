@@ -3,9 +3,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 
 from qa.models import Question
+from qa.forms import AskForm, AnswerForm
 
 
 def test(request, *args, **kwargs):
@@ -52,15 +53,35 @@ def popular(request, *args, **kwargs):
         })
 
 
-@require_GET
 def question_detail(request, *args, **kwargs):
     question_id = kwargs.get('pk', None)
     try:
         question = Question.objects.get(id=question_id)
+        form = AnswerForm(initial={'question': question})
     except Question.DoesNotExist:
-        raise Http404
-    return render(request, 'question.html', {'question': question})
+        raise Http404    
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save()
+            answer.question = question
+            answer.save()
+            url = answer.question.get_url()
+            return HttpResponseRedirect(url)    
+    return render(request, 'question.html', {'question': question, 'form': form})
 
+
+
+def aks(request, *args, **kwargs):
+    if request.method == "POST":
+        form = AskForm(request.POST)
+        if form.is_valid():
+            question = form.save()
+            url = question.get_url()
+            return HttpResponseRedirect(url)
+    else:
+        form = AskForm()
+    return render(request, 'ask.html', {'form': form})
 
 
 
