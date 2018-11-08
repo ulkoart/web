@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from qa.models import Question
 from qa.forms import AskForm, AnswerForm
@@ -67,7 +68,9 @@ def question_detail(request, *args, **kwargs):
             answer.question = question
             answer.save()
             url = answer.question.get_url()
-            return HttpResponseRedirect(url)    
+            return HttpResponseRedirect(url)
+        else:
+            return render(request, 'question.html', {'question': question, 'form': form})    
     return render(request, 'question.html', {'question': question, 'form': form})
 
 
@@ -77,7 +80,7 @@ def aks(request, *args, **kwargs):
         form = AskForm(request.POST)
         if form.is_valid():
             question = form.save()
-            url = question.get_url()
+            url = reverse('question_detail', args=[question.id])
             return HttpResponseRedirect(url)
     else:
         form = AskForm()
