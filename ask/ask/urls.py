@@ -3,13 +3,13 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
-from qa.views import test, main, popular, question_detail, aks
+from qa.views import test, main, popular, question_detail, aks, signup, login_ask
 
 
 urlpatterns = [
-    url(r'^$', main),
-    url(r'^login/$', test),
-    url(r'^signup/$', test),
+    url(r'^$', main, name='main'),
+    url(r'^login/$', login_ask),
+    url(r'^signup/$', signup),
     url(r'^question/(?P<pk>[0-9]+)/$', question_detail, name='question_detail'),
     url(r'^ask/$', aks),
     url(r'^popular/$', popular),

@@ -5,9 +5,10 @@ from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth import authenticate, login, logout
 
 from qa.models import Question
-from qa.forms import AskForm, AnswerForm
+from qa.forms import AskForm, AnswerForm, SignupForm, LoginForm
 
 
 def test(request, *args, **kwargs):
@@ -67,24 +68,61 @@ def question_detail(request, *args, **kwargs):
             answer = form.save()
             answer.question = question
             answer.save()
-            url = answer.question.get_url()
-            return HttpResponseRedirect(url)
-        else:
-            return render(request, 'question.html', {'question': question, 'form': form})    
+            if request.user.is_authenticated:
+                answer.author = request.user
+                answer.save()            
+        url = reverse('question_detail', args=[question.id])
+        form = AnswerForm(initial={'question': question})
+        # return render(request, 'question.html', {'question': question, 'form': form})
     return render(request, 'question.html', {'question': question, 'form': form})
 
 
 
-def aks(request, *args, **kwargs):
+def ask(request):
     if request.method == "POST":
         form = AskForm(request.POST)
         if form.is_valid():
-            question = form.save()
-            url = reverse('question_detail', args=[question.id])
+            form._user = request.user
+            post = form.save()
+            url = post.get_url()
             return HttpResponseRedirect(url)
     else:
         form = AskForm()
     return render(request, 'ask.html', {'form': form})
+
+
+def signup(request, *args, **kwargs):
+    if request.method == "POST":
+        # logout(request)
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+        return HttpResponseRedirect('/')
+    else:
+        form = SignupForm()
+    return render(request, 'signup.html', {'form': form})
+
+
+def login_ask(request, *args, **kwargs):
+    if request.method == "POST":
+        # logout(request) 
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(username=username, password=password)
+            print(username, password)
+            login(request, user)
+            url = reverse('main')
+            return HttpResponseRedirect(url)
+        request.session['sessionid'] = None
+        return HttpResponseRedirect('/login/')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
+
 
 
 

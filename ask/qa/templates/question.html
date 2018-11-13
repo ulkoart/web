@@ -5,15 +5,15 @@
     <title>Q</title>
   </head>
   <body>
-    <h2>{{ question.title }}</h2>
+    <h2>{{ question.title }} [{{ question.author }}]</h2>
     <p>{{ question.text }}</p>
-    <form method="POST">
+    <form method="post">
       {% csrf_token %}
       {{ form.text }}
       <button type="submit">Сохранить</button>
       <ul>
         {% for ansver in question.answer_set.all %}
-          <li>{{ ansver }}</li>
+          <li>{{ ansver.text }} [{{ ansver.author }}]</li>
         {% endfor %}
       </ul>
     </body>

@@ -5,6 +5,7 @@
     <title>ask</title>
   </head>
   <body>
+    {{ request.user.username }}
     {% for question in questions %}
       <li>
          <a href="{{ question.get_url }}">{{ question.title }}</a> {{ question.added_at }}
@@ -14,5 +15,6 @@
     {% for p in paginator.page_range %}
       <a href="?page={{ p }}">{{ p }}</a>
     {% endfor %}
+
 </body>
 </html>
